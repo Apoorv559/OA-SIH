@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OA Risk Score Predictor — Live Biomechanical Dashboard</title>
+    <meta name="description" content="Osteoarthritis risk prediction and real-time IoT-based biomechanical monitoring with live gait analysis.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>OA Risk Score Predictor</h1>
+            <p>Predict Osteoarthritis risk &amp; Assess Movement Biomechanics</p>
+            <nav class="app-nav">
+                <button id="nav-risk" class="nav-btn active">Risk Predictor</button>
+                <button id="nav-movement" class="nav-btn">Movement Assessment</button>
+                <button id="nav-iot" class="nav-btn">
+                    <span class="nav-icon">📡</span> Live IoT Dashboard
+                </button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Risk Predictor Section -->
+            <section id="risk-score-section" class="app-section active">
+                <form id="prediction-form" class="glass-panel">
+                <div class="form-grid">
+                    <!-- Column 1 -->
+                    <div class="form-group">
+                        <label for="Age">Age</label>
+                        <input type="number" id="Age" name="Age" min="1" max="120" required placeholder="e.g., 55">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Sex">Sex</label>
+                        <select id="Sex" name="Sex" required>
+                            <option value="" disabled selected>Select Sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Height">Height (cm)</label>
+                        <input type="number" id="Height" name="Height" min="50" max="300" step="0.1" required placeholder="e.g., 170">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Weight">Weight (kg)</label>
+                        <input type="number" id="Weight" name="Weight" min="20" max="500" step="0.1" required placeholder="e.g., 70">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="BMI">BMI (Auto-calculated)</label>
+                        <input type="number" id="BMI" name="BMI" readonly placeholder="-" class="readonly">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Previous_injury">Previous Joint Injury?</label>
+                        <select id="Previous_injury" name="Previous_injury" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Surgery">Previous Surgery?</label>
+                        <select id="Surgery" name="Surgery" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Family_history">Family History of OA?</label>
+                        <select id="Family_history" name="Family_history" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Occupation">Occupation Type</label>
+                        <select id="Occupation" name="Occupation" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Desk Job">Desk Job</option>
+                            <option value="Manual Labor">Manual Labor</option>
+                            <option value="Mixed">Mixed</option>
+                            <option value="Retired">Retired</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Physical_activity">Physical Activity Level</label>
+                        <select id="Physical_activity" name="Physical_activity" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Low">Low</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Pain">Pain Level (1-10)</label>
+                        <input type="range" id="Pain" name="Pain" min="1" max="10" value="5" oninput="this.nextElementSibling.value = this.value">
+                        <output>5</output>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Morning_stiffness">Morning Stiffness?</label>
+                        <select id="Morning_stiffness" name="Morning_stiffness" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Functional_limitations">Functional Limitations</label>
+                        <select id="Functional_limitations" name="Functional_limitations" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="None">None</option>
+                            <option value="Mild">Mild</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Severe">Severe</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Relevant_comorbidities">Relevant Comorbidities</label>
+                        <select id="Relevant_comorbidities" name="Relevant_comorbidities" required>
+                            <option value="" disabled selected>Select</option>
+                            <option value="None">None</option>
+                            <option value="Diabetes">Diabetes</option>
+                            <option value="Hypertension">Hypertension</option>
+                            <option value="Obesity">Obesity</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submit-btn">Predict OA Risk</button>
+                </div>
+            </form>
+            </section>
+
+            <!-- Movement Assessment Section -->
+            <section id="movement-assessment-section" class="app-section hidden">
+                <div class="glass-panel text-center">
+                    <h2>Video Movement Analysis</h2>
+                    <p class="subtitle">Record or upload a video of a specific movement to receive a biomechanical score.</p>
+                    
+                    <div class="form-group center-group">
+                        <label for="movement-type">Movement Type</label>
+                        <select id="movement-type" name="movement_type" required>
+                            <option value="Squat" selected>Squat</option>
+                            <option value="Walking">Walking</option>
+                            <option value="Sit-to-stand">Sit-to-stand</option>
+                            <option value="Stair movement">Stair movement</option>
+                        </select>
+                    </div>
+
+                    <div class="video-capture-area">
+                        <div class="button-group">
+                            <label class="upload-btn">
+                                <input type="file" id="video-record" accept="video/*" capture="environment">
+                                <span class="upload-icon">📷</span>
+                                Record Video
+                            </label>
+                            <label class="upload-btn">
+                                <input type="file" id="video-upload" accept="video/*">
+                                <span class="upload-icon">📁</span>
+                                Upload Video
+                            </label>
+                        </div>
+                        <p id="file-name-display" class="file-name hidden"></p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="analyze-btn" disabled>Analyze Movement</button>
+                    </div>
+
+                    <!-- Loader -->
+                    <div id="loading-spinner" class="hidden">
+                        <div class="spinner"></div>
+                        <p>Analyzing biomechanics with AI... this may take a moment.</p>
+                    </div>
+
+                    <!-- Results Dashboard -->
+                    <div id="assessment-results" class="results-dashboard hidden">
+                        <h3>Assessment Results</h3>
+                        
+                        <div class="score-card">
+                            <h4>Biomechanical Score</h4>
+                            <div class="score-circle">
+                                <span id="bio-score-val">--</span><small>/100</small>
+                            </div>
+                        </div>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <h5>Knee ROM (L/R)</h5>
+                                <p><span id="knee-rom-val">--</span></p>
+                            </div>
+                            <div class="metric-card">
+                                <h5>Movement Symmetry</h5>
+                                <p><span id="symmetry-val">--</span>%</p>
+                            </div>
+                            <div class="metric-card">
+                                <h5>Avg Hip Angle (L/R)</h5>
+                                <p><span id="hip-angle-val">--</span></p>
+                            </div>
+                            <div class="metric-card">
+                                <h5>Avg Knee Angle (L/R)</h5>
+                                <p><span id="knee-angle-val">--</span></p>
+                            </div>
+                            <div class="metric-card">
+                                <h5>Avg Ankle Angle (L/R)</h5>
+                                <p><span id="ankle-angle-val">--</span></p>
+                            </div>
+                        </div>
+
+                        <div id="gait-card" class="metric-card full-width">
+                            <h5>Gait Characteristics</h5>
+                            <p id="gait-val" style="margin-bottom: 10px;">--</p>
+                            
+                            <div id="gait-vector-details" class="hidden" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div><small style="color: var(--text-muted)">Cadence:</small> <br> <span id="gait-cadence">--</span> spm</div>
+                                <div><small style="color: var(--text-muted)">Speed:</small> <br> <span id="gait-speed">--</span> m/s</div>
+                                <div><small style="color: var(--text-muted)">Step Duration:</small> <br> <span id="gait-step">--</span> s</div>
+                                <div><small style="color: var(--text-muted)">Stride Duration:</small> <br> <span id="gait-stride">--</span> s</div>
+                                <div><small style="color: var(--text-muted)">Variability:</small> <br> <span id="gait-var">--</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== LIVE IoT DASHBOARD ==================== -->
+            <section id="iot-dashboard-section" class="app-section hidden">
+
+                <!-- Connection Status Bar -->
+                <div class="iot-status-bar glass-panel">
+                    <div class="status-indicator" id="iot-connection-indicator">
+                        <span class="status-dot disconnected" id="iot-status-dot"></span>
+                        <span id="iot-status-text">ESP32 Disconnected</span>
+                    </div>
+                    <div class="status-metrics">
+                        <span class="status-badge" id="iot-step-count">Steps: 0</span>
+                        <span class="status-badge" id="iot-cadence">Cadence: -- spm</span>
+                        <span class="status-badge" id="iot-stride-time">Stride: -- s</span>
+                    </div>
+                    <button type="button" id="iot-connect-btn" class="connect-btn">Connect</button>
+                </div>
+
+                <!-- Alert Banner -->
+                <div id="iot-alert-banner" class="alert-banner hidden">
+                    <span class="alert-icon">⚠️</span>
+                    <span id="iot-alert-text">Alert message</span>
+                    <button type="button" class="alert-dismiss" id="iot-alert-dismiss">×</button>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+
+                    <!-- Joint Angles Card -->
+                    <div class="dashboard-card glass-panel">
+                        <div class="card-header">
+                            <h3>🦵 Joint Angles</h3>
+                            <span class="card-badge">Real-time</span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chart-knee-angles"></canvas>
+                        </div>
+                        <div class="card-footer-metrics">
+                            <div class="inline-metric">
+                                <span class="metric-label">Left Knee</span>
+                                <span class="metric-value" id="iot-left-knee">--°</span>
+                            </div>
+                            <div class="inline-metric">
+                                <span class="metric-label">Right Knee</span>
+                                <span class="metric-value" id="iot-right-knee">--°</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foot Pressure Card -->
+                    <div class="dashboard-card glass-panel">
+                        <div class="card-header">
+                            <h3>🦶 Foot Pressure</h3>
+                            <span class="card-badge">8 sensors</span>
+                        </div>
+                        <div class="card-body pressure-body">
+                            <div class="foot-pressure-viz">
+                                <!-- Left Foot -->
+                                <div class="foot-diagram">
+                                    <h4>Left Foot</h4>
+                                    <div class="foot-outline">
+                                        <div class="pressure-zone heel" id="pz-l-heel">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Heel</span>
+                                        </div>
+                                        <div class="pressure-zone outer" id="pz-l-outer">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Outer</span>
+                                        </div>
+                                        <div class="pressure-zone inner" id="pz-l-inner">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Inner</span>
+                                        </div>
+                                        <div class="pressure-zone toe" id="pz-l-toe">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Toe</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Right Foot -->
+                                <div class="foot-diagram">
+                                    <h4>Right Foot</h4>
+                                    <div class="foot-outline">
+                                        <div class="pressure-zone heel" id="pz-r-heel">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Heel</span>
+                                        </div>
+                                        <div class="pressure-zone outer" id="pz-r-outer">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Outer</span>
+                                        </div>
+                                        <div class="pressure-zone inner" id="pz-r-inner">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Inner</span>
+                                        </div>
+                                        <div class="pressure-zone toe" id="pz-r-toe">
+                                            <span class="pz-val">0</span>
+                                            <span class="pz-label">Toe</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer-metrics">
+                            <div class="inline-metric">
+                                <span class="metric-label">Load Asymmetry</span>
+                                <span class="metric-value" id="iot-load-asymmetry">--%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gait Phase Card -->
+                    <div class="dashboard-card glass-panel">
+                        <div class="card-header">
+                            <h3>🚶 Gait Analysis</h3>
+                            <span class="card-badge">Live</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="gait-phases">
+                                <div class="gait-leg">
+                                    <span class="gait-label">Left Leg</span>
+                                    <div class="gait-phase-bar">
+                                        <span class="phase-indicator" id="gait-phase-left">--</span>
+                                    </div>
+                                </div>
+                                <div class="gait-leg">
+                                    <span class="gait-label">Right Leg</span>
+                                    <div class="gait-phase-bar">
+                                        <span class="phase-indicator" id="gait-phase-right">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="chart-load-distribution"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- IMU Activity Card -->
+                    <div class="dashboard-card glass-panel">
+                        <div class="card-header">
+                            <h3>📊 Segment Activity</h3>
+                            <span class="card-badge">Accel Mag</span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="chart-imu-activity"></canvas>
+                        </div>
+                        <div class="card-footer-metrics">
+                            <div class="inline-metric">
+                                <span class="metric-label">L-Thigh</span>
+                                <span class="metric-value" id="iot-lt-accel">--</span>
+                            </div>
+                            <div class="inline-metric">
+                                <span class="metric-label">R-Thigh</span>
+                                <span class="metric-value" id="iot-rt-accel">--</span>
+                            </div>
+                            <div class="inline-metric">
+                                <span class="metric-label">L-Shin</span>
+                                <span class="metric-value" id="iot-ls-accel">--</span>
+                            </div>
+                            <div class="inline-metric">
+                                <span class="metric-label">R-Shin</span>
+                                <span class="metric-value" id="iot-rs-accel">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Result Modal -->
+        <div id="result-modal" class="modal hidden">
+            <div class="modal-content glass-panel">
+                <span class="close-btn">&times;</span>
+                <h2>Prediction Result</h2>
+                <div class="result-display">
+                    <div id="risk-score" class="risk-score">Calculating...</div>
+                    <div id="risk-probabilities" class="risk-probabilities"></div>
+                </div>
+                <button id="reset-btn" class="secondary-btn">New Prediction</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
